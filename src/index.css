@@ -2,3 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+nav a{
+   padding: 4px 8px;
+   border-radius: 6px;
+   line-height: normal;
+   line-height: 18px;
+}
+.active{
+   background-color: white;
+   color: black;
+}
