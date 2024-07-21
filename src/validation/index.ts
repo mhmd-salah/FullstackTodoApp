@@ -16,8 +16,7 @@ export const registerSchema = yup
   })
   .required();
 
-  
-  // login schema
+// login schema
 export const loginSchema = yup
   .object({
     identifier: yup
@@ -27,6 +26,7 @@ export const loginSchema = yup
     password: yup
       .string()
       .required("Password is required")
-      .min(6, "Password should be at least 6 charachters."),
+      .min(6, "Password should be at least 6 characters."),
   })
   .required();
+

@@ -33,7 +33,7 @@ const Register = () => {
           placeholder={placeholder}
           {...register(name, validation)}
         />
-        <div className="h-4">
+        <div className="h-3">
           {errors[name] && <InputErrorMessage msg={errors[name]?.message} />}
         </div>
       </div>
