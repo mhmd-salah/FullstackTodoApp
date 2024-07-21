@@ -8,6 +8,8 @@ import { registerSchema } from "../validation";
 import axiosInstance from "../config/axios.config";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import { AxiosError } from "axios";
+import { IErrorResponse } from "../interfaces";
 
 interface IformInput {
   username: string;
@@ -16,7 +18,7 @@ interface IformInput {
 }
 
 const Register = () => {
-  const [isLoading,setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
     formState: { errors },
@@ -39,24 +41,31 @@ const Register = () => {
   );
 
   // Handler
-  const onSubmit: SubmitHandler<IformInput> = async(data) => {
-    setIsLoading(true)
-    try{
-      const {status} = await axiosInstance.post("/auth/local/register",data)
-      if(status === 200){
-        toast.success("you will navigate to the Home",{
-          position:"bottom-center",
-          duration:4000,
-          style:{
-            background:"teal",
-            color:"white"
-          }
-        })
+  const onSubmit: SubmitHandler<IformInput> = async (data) => {
+    setIsLoading(true);
+    try {
+      const { status } = await axiosInstance.post("/auth/local/register", data);
+      if (status === 200) {
+        toast.success("you will navigate to the Home", {
+          position: "bottom-right",
+          duration: 4000,
+          style: {
+            background: "teal",
+            color: "white",
+          },
+        });
       }
-    }catch(error){  
-      console.log(error)
-    }finally{
-      setIsLoading(false)
+    } catch (error) {
+      const errorObj = error as AxiosError<IErrorResponse>;
+      const errorMsg = errorObj.response?.data?.error?.message;
+      toast.error(`Error: ${errorMsg}`, {
+        duration: 2000,
+        style: {
+          width: "fit-content",
+        },
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   console.log(errors);
@@ -66,11 +75,7 @@ const Register = () => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         {renderRegisterForm}
         <Button fullWidth type="submit" className="h-14" isLoading={isLoading}>
-          {isLoading ? (
-            "Loading"
-          ) : (
-            "Register"
-          )}
+          {isLoading ? "Loading" : "Register"}
         </Button>
       </form>
     </div>
