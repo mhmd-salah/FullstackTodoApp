@@ -2,13 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-nav a{
-   padding: 4px 8px;
-   border-radius: 6px;
-   line-height: normal;
-   line-height: 18px;
+nav a {
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: normal;
+  line-height: 18px;
 }
-.active{
-   background-color: white;
-   color: black;
+.active {
+  background-color: white;
+  color: black;
+}
+.todo-colors > * {
+  @apply odd:bg-[#f7f8f9];
+  @apply even:bg-white;
+  @apply hover:bg-[#f7f8f9];
+  @apply transition-all
+}
+
+.DlB  {
+  @apply bg-red-600;
+  @apply text-white;
+}
+h3 {
+  font-size: 23px;
 }

@@ -1,9 +1,9 @@
 import toast from "react-hot-toast";
 import { NavLink, useLocation } from "react-router-dom";
+import Button from "./ui/Button";
 
 const Navbar = () => {
   const {pathname} = useLocation()
-
   const userData = JSON.parse(localStorage.getItem("loggedInUser")as string);
   const onLogout = ()=>{
     localStorage.removeItem("loggedInUser")
@@ -31,7 +31,7 @@ const Navbar = () => {
                 <NavLink to="/todos">Todos</NavLink>
               </li>
               <li className="text-white duration-200 font-semibold text-lg">
-                <button onClick={onLogout} className="text-red-600 ">Logout</button>
+                <Button onClick={onLogout} className="text-red-600 ">Logout</Button>
               </li>
             </p>
           </>
