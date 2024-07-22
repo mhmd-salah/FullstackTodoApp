@@ -31,7 +31,7 @@ const Navbar = () => {
                 <NavLink to="/todos">Todos</NavLink>
               </li>
               <li className="text-white duration-200 font-semibold text-lg">
-                <Button onClick={onLogout} className="text-red-600 ">Logout</Button>
+                <Button onClick={onLogout} className="text-red-600 bg-transparent ">Logout</Button>
               </li>
             </p>
           </>
