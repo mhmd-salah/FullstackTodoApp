@@ -9,6 +9,7 @@ import axiosInstance from "../config/axios.config";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { Link, } from "react-router-dom";
 
 interface IError {
   error: {
@@ -21,6 +22,7 @@ interface IFormInput {
   password: string;
 }
 const LoginPage = () => {
+  // const navigate = useNavigate()
   const [isLoading,setIsLoading]= useState(false)
   const {
     register,
@@ -32,12 +34,13 @@ const LoginPage = () => {
     try{
       setIsLoading(true)
       const {status,data:resData}= await axiosInstance.post("/auth/local",data);
+      console.log(resData)
       if(status === 200){
         toast.success("email and password is correct")
         localStorage.setItem("loggedInUser", JSON.stringify(resData));
         setIsLoading(false);
         setTimeout(() => {
-          // window.location.replace("/")/
+          location.replace("/")
         }, 2000);
       }
     }catch(error){
@@ -74,6 +77,7 @@ const LoginPage = () => {
           {isLoading?"loading":"Login"}
         </Button>
       </form>
+      <p className="mt-3 text-center">No Account? <Link className="text-blue-700" to={"/register"}>register</Link> </p>
     </div>
   );
 };

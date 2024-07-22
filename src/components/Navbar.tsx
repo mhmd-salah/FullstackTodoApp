@@ -1,37 +1,40 @@
+import toast from "react-hot-toast";
 import { NavLink, useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  const { pathname } = useLocation();
-  const storageKey = "loggedInUser";
-  const userDataString = localStorage.getItem(storageKey);
-  const userData = userDataString ? JSON.parse(userDataString) : null;
-  const onLogout = () => {
-    localStorage.removeItem(storageKey);
-    setTimeout(() => {
-      location.replace(pathname);
-    }, 1500);
-  };
+  const {pathname} = useLocation()
+
+  const userData = JSON.parse(localStorage.getItem("loggedInUser")as string);
+  const onLogout = ()=>{
+    localStorage.removeItem("loggedInUser")
+    toast.success("logout success")
+    setTimeout(()=>{
+      location.pathname= pathname
+    },1500)
+  }
   return (
-    <nav className="bg-[#222] px-7  mx-auto mb-20  py-5  ">
-      <ul className="flex items-center justify-between">
+    <nav className="bg-[#222] px-9  mb-20  py-5 w-full ">
+      <ul className="flex items-center justify-center sm:justify-between container">
         <li className="text-white duration-200 font-semibold text-lg">
           <NavLink to="/">Home</NavLink>
         </li>
-        {userData ? (
-          <div className="flex items-center space-x-4">
-            <li className="duration-200 text-lg">
-              <NavLink to="/todos">todos</NavLink>
+        {userData?.jwt ? (
+          <>
+            <li className="text-sky-400 duration-200 font-semibold text-sm hidden sm:block">
+              Email : {userData.user.email}
             </li>
-            <li className="duration-200 text-lg">
-              <NavLink to="/profile">Profile</NavLink>
-            </li>
-            <button
-              className="bg-indigo-500 text-white p-2 rounded-md cursor-pointer"
-              onClick={onLogout}
-            >
-              Logout
-            </button>
-          </div>
+            <p className="flex items-center ">
+              <li className="text-white duration-200 font-semibold text-lg">
+                <NavLink to="/profile">Profile</NavLink>
+              </li>
+              <li className="text-white duration-200 font-semibold text-lg">
+                <NavLink to="/todos">Todos</NavLink>
+              </li>
+              <li className="text-white duration-200 font-semibold text-lg">
+                <button onClick={onLogout} className="text-red-600 ">Logout</button>
+              </li>
+            </p>
+          </>
         ) : (
           <p className="flex items-center space-x-3">
             <li className="text-white duration-200 font-semibold text-lg">

@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interfaces";
+import { useNavigate } from "react-router-dom";
 
 interface IformInput {
   username: string;
@@ -18,6 +19,7 @@ interface IformInput {
 }
 
 const Register = () => {
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
@@ -50,11 +52,14 @@ const Register = () => {
           position: "bottom-right",
           duration: 4000,
           style: {
-            background: "teal",
+            background: "teal ",
             color: "white",
           },
         });
       }
+      setTimeout(() => {
+        navigate("/login")
+      }, 2000);
     } catch (error) {
       const errorObj = error as AxiosError<IErrorResponse>;
       const errorMsg = errorObj.response?.data?.error?.message;
