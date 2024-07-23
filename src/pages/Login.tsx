@@ -30,10 +30,12 @@ const LoginPage = () => {
     handleSubmit,
   } = useForm<IFormInput>({ resolver: yupResolver(loginSchema) });
   const onSubmit: SubmitHandler<IFormInput> = async(data) => {
-    console.log(data)
     try{
       setIsLoading(true)
-      const {status,data:resData}= await axiosInstance.post("/auth/local",data);
+      const { status, data: resData } = await axiosInstance.post(
+        "/auth/local",
+        data
+      );
       console.log(resData)
       if(status === 200){
         toast.success("email and password is correct")
