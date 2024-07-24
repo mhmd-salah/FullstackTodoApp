@@ -6,6 +6,7 @@ const TodoList = () => {
     localStorage.getItem("loggedInUser") as string
   );
   const userData = loggedInUser?.jwt;
+  
   const { isLoading, data } = useAuthenticatedQuery({
     queryKey: ["todos"],
     url: "/users/me?populate=todos",

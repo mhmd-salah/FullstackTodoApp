@@ -9,7 +9,7 @@ import axiosInstance from "../config/axios.config";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useState } from "react";
-import { Link, } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface IError {
   error: {
@@ -23,39 +23,39 @@ interface IFormInput {
 }
 const LoginPage = () => {
   // const navigate = useNavigate()
-  const [isLoading,setIsLoading]= useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<IFormInput>({ resolver: yupResolver(loginSchema) });
-  const onSubmit: SubmitHandler<IFormInput> = async(data) => {
-    try{
-      setIsLoading(true)
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    try {
+      setIsLoading(true);
       const { status, data: resData } = await axiosInstance.post(
         "/auth/local",
         data
       );
-      console.log(resData)
-      if(status === 200){
-        toast.success("email and password is correct")
+      console.log(resData);
+      if (status === 200) {
+        toast.success("email and password is correct");
         localStorage.setItem("loggedInUser", JSON.stringify(resData));
         setIsLoading(false);
         setTimeout(() => {
-          location.replace("/")
+          location.replace("/");
         }, 2000);
       }
-    }catch(error){
+    } catch (error) {
       const errorAxios = error as AxiosError<IError>;
-      const errMsg= errorAxios.response?.data?.error.message
-      toast.remove(errMsg)
-    }finally{
+      const errMsg = errorAxios.response?.data?.error.message;
+      toast.remove(errMsg);
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
   console.log(errors);
 
-  // render 
+  // render
   const RenderInputLogin = LOGIN_FORM.map(
     ({ name, type, placeholder, validation }, idx) => (
       <div key={idx}>
@@ -65,7 +65,7 @@ const LoginPage = () => {
           {...register(name, validation)}
         />
         <div className="h-3">
-          {errors[name]&&<InputErrorMessage msg={errors[name].message}/>}
+          {errors[name] && <InputErrorMessage msg={errors[name].message} />}
         </div>
       </div>
     )
@@ -76,10 +76,15 @@ const LoginPage = () => {
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         {RenderInputLogin}
         <Button fullWidth isLoading={isLoading}>
-          {isLoading?"loading":"Login"}
+          {isLoading ? "loading" : "Login"}
         </Button>
       </form>
-      <p className="mt-3 text-center">No Account? <Link className="text-blue-700" to={"/register"}>register</Link> </p>
+      <p className="mt-3 text-center">
+        No Account?{" "}
+        <Link className="text-blue-700 underline" to={"/register"}>
+          register
+        </Link>
+      </p>
     </div>
   );
 };

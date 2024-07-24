@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interfaces";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface IformInput {
   username: string;
@@ -63,17 +63,17 @@ const Register = () => {
     } catch (error) {
       const errorObj = error as AxiosError<IErrorResponse>;
       const errorMsg = errorObj.response?.data?.error?.message;
-      toast.error(`Error: ${errorMsg}`, {
-        duration: 2000,
-        style: {
-          width: "fit-content",
-        },
-      });
+      if (errorMsg === "Email or Username are already taken") navigate("/login")
+        toast.error(`Error: ${errorMsg}`, {
+          duration: 2000,
+          style: {
+            width: "fit-content",
+          },
+        });
     } finally {
       setIsLoading(false);
     }
   };
-  console.log(errors);
   return (
     <div className="max-w-md mx-auto h-full mt-[40%] sm:mt-[15%]">
       <h2 className="text-3xl mb-4">Register Now</h2>
@@ -83,6 +83,12 @@ const Register = () => {
           {isLoading ? "Loading" : "Register"}
         </Button>
       </form>
+      <p className="mt-3 text-center">
+        Do you have an account?{" "}
+        <Link className="text-blue-700 underline" to={"/login"}>
+          login
+        </Link>
+      </p>
     </div>
   );
 };
