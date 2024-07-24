@@ -20,8 +20,8 @@ const Navbar = () => {
         </li>
         {userData?.jwt ? (
           <>
-            <li className="text-sky-400 duration-200 font-semibold text-sm hidden sm:block">
-              Email : {userData.user.email}
+            <li className="text-teal-400 duration-200 font-semibold text-sm hidden sm:block">
+              Name : {userData.user.username}
             </li>
             <p className="flex items-center ">
               <li className="text-white duration-200 font-semibold text-lg">
