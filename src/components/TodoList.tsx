@@ -6,6 +6,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
+import toast from "react-hot-toast";
 
 const TodoList = () => {
   // hooks
@@ -15,6 +16,7 @@ const TodoList = () => {
     description: "",
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [isUpdating,setIsUpdating] =useState<boolean>(false)
 
   const loggedInUser = JSON.parse(
     localStorage.getItem("loggedInUser") as string
@@ -55,6 +57,7 @@ const TodoList = () => {
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsUpdating(true)
     const { title, description } = todoEdit;
     try {
       const res = await axiosInstance.put(
@@ -67,21 +70,21 @@ const TodoList = () => {
         }
       );
       console.log(res);
+      if(res.status === 200){
+        onCloseEditModal()
+        toast.success('todo updated')
+      }
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsUpdating(false)
     }
-    console.log(todoEdit);
   };
 
-  if (isLoading)
-    return (
-      <h1 className="p-8 animate-pulse bg-slate-200">
-        <span className="w-5 h-6 bg-slate-600"></span>
-      </h1>
-    );
+  if (isLoading) return 'loading..'
   return (
     <div className="todo-colors space-y-3 ">
-      {data?.todos?.length ? (
+      {data?.todos?.length && (
         data.todos.map((todo: ITodo) => (
           <div
             className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
@@ -99,10 +102,6 @@ const TodoList = () => {
             </div>
           </div>
         ))
-      ) : (
-        <h3 className="text-[50px] text-slate-300 font-extrabold animate-pulse">
-          No Todos Yet
-        </h3>
       )}
       {/* edit todo modal */}
       <Modal
@@ -124,7 +123,7 @@ const TodoList = () => {
             name="description"
           />
           <div className="flex space-x-2 mt-4">
-            <Button fullWidth className="bg-teal-600 hover:bg-teal-700">
+            <Button fullWidth className="bg-teal-600 hover:bg-teal-700" isLoading={isUpdating}>
               Update
             </Button>
             <Button fullWidth variant={"cancel"} onClick={onCloseEditModal}>

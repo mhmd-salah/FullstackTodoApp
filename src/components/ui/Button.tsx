@@ -14,7 +14,7 @@ const buttonVariants = cva(
           "bg-red-900 dark:bg-[#c2344d] dark:text-white dark:hover:bg-red-700",
         cancel:
           "bg-gray-300 text-gray-700 dark:bg-[#f5f5fa] dark:text-dark hover:bg-gray-400 dark:hover:bg-gray-200",
-
+        
         // ** OUTLINE
         outline:
           "border border-indigo-400 hover:text-white bg-transparent text-black hover:border-transparent hover:bg-indigo-600 dark:text-gray-700 dark:hover:text-white",
@@ -81,7 +81,7 @@ const Button = ({
           ></path>
         </svg>
       ) : null}
-      {children}
+      {isLoading ? "loading" :  children }
     </button>
   );
 };
