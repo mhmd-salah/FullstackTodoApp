@@ -2,7 +2,7 @@ import TodoList from "../components/TodoList";
 
 const HomePage = () => {
   return (
-    <section className="max-w-2xl mx-auto">
+    <section className="max-w-3xl mx-auto">
       <TodoList />
     </section>
   );
