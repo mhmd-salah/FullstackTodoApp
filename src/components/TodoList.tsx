@@ -16,6 +16,7 @@ const TodoList = () => {
     description: "",
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenConfirmM,setIsOpenConfirmM] = useState(false)
   const [isUpdating,setIsUpdating] =useState<boolean>(false)
 
   const loggedInUser = JSON.parse(
@@ -45,6 +46,12 @@ const TodoList = () => {
       description: "",
     });
   };
+  const onOpenConfirmM = ()=>{
+    setIsOpenConfirmM(true)
+  }
+  const onCloseConfirmM = ()=>{
+    setIsOpenConfirmM(false)
+  }
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -84,7 +91,7 @@ const TodoList = () => {
   if (isLoading) return 'loading..'
   return (
     <div className="todo-colors space-y-3 ">
-      {data?.todos?.length && (
+      {data?.todos?.length &&
         data.todos.map((todo: ITodo) => (
           <div
             className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
@@ -98,12 +105,16 @@ const TodoList = () => {
               >
                 Edit
               </Button>
-              <Button className="w-[100px] DlB">Remove</Button>
+              <Button
+                className="w-[100px] DlB"
+                onClick={() => onOpenConfirmM()}
+              >
+                Remove
+              </Button>
             </div>
           </div>
-        ))
-      )}
-      
+        ))}
+
       {/* edit todo modal */}
       <Modal
         isOpen={isOpen}
@@ -124,7 +135,11 @@ const TodoList = () => {
             name="description"
           />
           <div className="flex space-x-2 mt-4">
-            <Button fullWidth className="bg-teal-600 hover:bg-teal-700" isLoading={isUpdating}>
+            <Button
+              fullWidth
+              className="bg-teal-600 hover:bg-teal-700"
+              isLoading={isUpdating}
+            >
               Update
             </Button>
             <Button fullWidth variant={"cancel"} onClick={onCloseEditModal}>
@@ -132,6 +147,22 @@ const TodoList = () => {
             </Button>
           </div>
         </form>
+      </Modal>
+      <Modal
+        isOpen={isOpenConfirmM}
+        closeModal={onCloseConfirmM}
+        title="confirm remove todo"
+        description=""
+      >
+        <p className="mb-3 text-lg">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed
+          recusandae sit cupiditate ad, in a libero suscipit non voluptatibus
+          molestias!
+        </p>
+        <div className="flex space-x-2">
+          <Button className="bg-red-600" fullWidth>remove</Button>
+          <Button variant={"cancel"} fullWidth onClick={()=>onCloseConfirmM()}>Cancel</Button>
+        </div>
       </Modal>
     </div>
   );
