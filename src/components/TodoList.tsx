@@ -2,17 +2,20 @@ import Button from "./ui/Button";
 import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
 import Modal from "./ui/Modal";
 import Input from "./ui/Input";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
+import axiosInstance from "../config/axios.config";
 
 const TodoList = () => {
+  // hooks
   const [todoEdit, setTodoEdit] = useState<ITodo>({
-    id:0,
-    title:"",
-    description:""
+    id: 0,
+    title: "",
+    description: "",
   });
   const [isOpen, setIsOpen] = useState(false);
+
   const loggedInUser = JSON.parse(
     localStorage.getItem("loggedInUser") as string
   );
@@ -28,18 +31,47 @@ const TodoList = () => {
     },
   });
   // handlers
-  const onOpenEditModal = (todo:ITodo) => {
+  const onOpenEditModal = (todo: ITodo) => {
     setIsOpen(true);
-    setTodoEdit(todo)
-  }
+    setTodoEdit(todo);
+  };
   const onCloseEditModal = () => {
     setIsOpen(false);
     setTodoEdit({
-      id:0,
-      title:"",
-      description:""
-    })
-  }
+      id: 0,
+      title: "",
+      description: "",
+    });
+  };
+  const onChangeHandler = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { value, name } = e.target;
+    setTodoEdit({
+      ...todoEdit,
+      [name]: value,
+    });
+  };
+
+  const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { title, description } = todoEdit;
+    try {
+      const res = await axiosInstance.put(
+        `/todos/${todoEdit.id}`,
+        { data: { title, description } },
+        {
+          headers: {
+            Authorization: `Bearer ${userData}`,
+          },
+        }
+      );
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(todoEdit);
+  };
 
   if (isLoading)
     return (
@@ -79,16 +111,27 @@ const TodoList = () => {
         title="Edit Todo"
         description=""
       >
-        <Input type="text" value={todoEdit.title} />
-        <Textarea value={todoEdit.description}/>
-        <div className="flex space-x-2 mt-4">
-          <Button fullWidth className="bg-teal-600 hover:bg-teal-700">
-            Update
-          </Button>
-          <Button fullWidth variant={"cancel"} onClick={onCloseEditModal}>
-            Cancel
-          </Button>
-        </div>
+        <form onSubmit={submitHandler}>
+          <Input
+            type="text"
+            value={todoEdit.title}
+            name="title"
+            onChange={onChangeHandler}
+          />
+          <Textarea
+            value={todoEdit.description}
+            onChange={onChangeHandler}
+            name="description"
+          />
+          <div className="flex space-x-2 mt-4">
+            <Button fullWidth className="bg-teal-600 hover:bg-teal-700">
+              Update
+            </Button>
+            <Button fullWidth variant={"cancel"} onClick={onCloseEditModal}>
+              Cancel
+            </Button>
+          </div>
+        </form>
       </Modal>
     </div>
   );

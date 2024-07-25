@@ -30,3 +30,11 @@ export const loginSchema = yup
   })
   .required();
 
+export const EditInputs = yup.object({
+  title: yup
+    .string()
+    .required("the title is required")
+    .min(5, "Wars must be at least five letters long")
+    .max(12, "Must be less than twelve characters"),
+  description:yup.string()
+});
