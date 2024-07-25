@@ -24,7 +24,7 @@ const TodoList = () => {
   const userData = loggedInUser?.jwt;
 
   const { isLoading, data } = useAuthenticatedQuery({
-    queryKey: ["todos"],
+    queryKey: ["todoList",todoEdit.id.toString()],
     url: "/users/me?populate=todos",
     config: {
       headers: {
@@ -60,7 +60,7 @@ const TodoList = () => {
     setIsUpdating(true)
     const { title, description } = todoEdit;
     try {
-      const res = await axiosInstance.put(
+      const {status} = await axiosInstance.put(
         `/todos/${todoEdit.id}`,
         { data: { title, description } },
         {
@@ -69,8 +69,8 @@ const TodoList = () => {
           },
         }
       );
-      console.log(res);
-      if(res.status === 200){
+      console.log(status);
+      if(status === 200){
         onCloseEditModal()
         toast.success('todo updated')
       }
@@ -103,6 +103,7 @@ const TodoList = () => {
           </div>
         ))
       )}
+      
       {/* edit todo modal */}
       <Modal
         isOpen={isOpen}
