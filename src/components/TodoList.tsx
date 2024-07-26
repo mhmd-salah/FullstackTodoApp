@@ -24,7 +24,7 @@ const TodoList = () => {
   );
   const userData = loggedInUser?.jwt;
 
-  const { isLoading: Loading, data } = useAuthenticatedQuery({
+  const { data,isLoading } = useAuthenticatedQuery({
     queryKey: ["todoList",todoEdit.id.toString()],
     url: "/users/me?populate=todos",
     config: {
@@ -107,17 +107,29 @@ const TodoList = () => {
     }
   };
 
-  if (Loading) return "loading"
-
+  if(isLoading) return (
+    <div className="flex items-center justify-between animate-pulse bg-[#f6f7f8] p-7">
+      <div>
+        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+        <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+      </div>
+      <div className="flex gap-3">
+        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
+      </div>
+    </div>
+  );
+  console.log(isLoading)
+  
   return (
     <div className="todo-colors space-y-3 ">
-      {data?.todos?.length ? (
-        data.todos.map((todo: ITodo) => (
+      {data?.todos?.length > 0 ? (
+        data.todos.map((todo: ITodo,idx:number) => (
           <div
             className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
             key={todo.id}
           >
-            <h3>{todo.title}</h3>
+            <h3>{idx+1} - {todo.title}</h3>
             <div className="flex space-x-2 ">
               <Button
                 className="w-[100px] bg-teal-600"

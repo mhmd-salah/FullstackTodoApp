@@ -13,7 +13,7 @@ const Navbar = () => {
     },1500)
   }
   return (
-    <nav className="bg-[#222] px-9  mb-20  py-5 w-full ">
+    <nav className="bg-[#222] px-9 py-5 w-full ">
       <ul className="flex items-center justify-center sm:justify-between container">
         <li className="text-white duration-200 font-semibold text-lg">
           <NavLink to="/">Home</NavLink>

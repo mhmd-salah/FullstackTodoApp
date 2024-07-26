@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import "../css/login.css"
 interface IError {
   error: {
     message?: string;
@@ -71,7 +71,7 @@ const LoginPage = () => {
     )
   );
   return (
-    <div className="max-w-md mx-auto h-full mt-[40%] sm:mt-[15%]">
+    <div className="login absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4 w-[400px] mx-auto ">
       <h2 className="text-3xl mb-4">Login</h2>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         {RenderInputLogin}
