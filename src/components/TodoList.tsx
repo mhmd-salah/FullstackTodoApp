@@ -24,7 +24,7 @@ const TodoList = () => {
   );
   const userData = loggedInUser?.jwt;
 
-  const { isLoading, data } = useAuthenticatedQuery({
+  const { isLoading: Loading, data } = useAuthenticatedQuery({
     queryKey: ["todoList",todoEdit.id.toString()],
     url: "/users/me?populate=todos",
     config: {
@@ -46,11 +46,17 @@ const TodoList = () => {
       description: "",
     });
   };
-  const onOpenConfirmM = ()=>{
+  const onOpenConfirmM = (todo:ITodo)=>{
     setIsOpenConfirmM(true)
+    setTodoEdit(todo)
   }
   const onCloseConfirmM = ()=>{
     setIsOpenConfirmM(false)
+    setTodoEdit({
+      id:0,
+      title:"",
+      description:""
+    })
   }
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,6 +67,19 @@ const TodoList = () => {
       [name]: value,
     });
   };
+  const onRemove= async()=>{
+    try{
+      const {status}=await axiosInstance.delete(`/todos/${todoEdit.id}`,{
+        headers:{
+          Authorization:`Bearer ${userData}`
+        }
+      })
+      if(status===200) onCloseConfirmM()
+    }catch(error){
+      toast.remove("Error :"+error);
+    }
+
+  }
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,10 +107,11 @@ const TodoList = () => {
     }
   };
 
-  if (isLoading) return 'loading..'
+  if (Loading) return "loading"
+
   return (
     <div className="todo-colors space-y-3 ">
-      {data?.todos?.length &&
+      {data?.todos?.length ? (
         data.todos.map((todo: ITodo) => (
           <div
             className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
@@ -107,13 +127,16 @@ const TodoList = () => {
               </Button>
               <Button
                 className="w-[100px] DlB"
-                onClick={() => onOpenConfirmM()}
+                onClick={() => onOpenConfirmM(todo)}
               >
                 Remove
               </Button>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <h3 className="text-3xl p-4 text-center animate-pulse">No Todos Yet</h3>
+      )}
 
       {/* edit todo modal */}
       <Modal
@@ -148,6 +171,7 @@ const TodoList = () => {
           </div>
         </form>
       </Modal>
+      {/* confirm modal */}
       <Modal
         isOpen={isOpenConfirmM}
         closeModal={onCloseConfirmM}
@@ -160,8 +184,16 @@ const TodoList = () => {
           molestias!
         </p>
         <div className="flex space-x-2">
-          <Button className="bg-red-600" fullWidth>remove</Button>
-          <Button variant={"cancel"} fullWidth onClick={()=>onCloseConfirmM()}>Cancel</Button>
+          <Button className="bg-red-600" fullWidth onClick={() => onRemove()}>
+            remove
+          </Button>
+          <Button
+            variant={"cancel"}
+            fullWidth
+            onClick={() => onCloseConfirmM()}
+          >
+            Cancel
+          </Button>
         </div>
       </Modal>
     </div>
