@@ -7,6 +7,7 @@ import Textarea from "./ui/Textarea";
 import { ITodo } from "../interfaces";
 import axiosInstance from "../config/axios.config";
 import toast from "react-hot-toast";
+import TodoSkeleton from "./TodoSkeleton";
 
 const TodoList = () => {
   // hooks
@@ -16,16 +17,16 @@ const TodoList = () => {
     description: "",
   });
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenConfirmM,setIsOpenConfirmM] = useState(false)
-  const [isUpdating,setIsUpdating] =useState<boolean>(false)
+  const [isOpenConfirmM, setIsOpenConfirmM] = useState(false);
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
 
   const loggedInUser = JSON.parse(
     localStorage.getItem("loggedInUser") as string
   );
   const userData = loggedInUser?.jwt;
 
-  const { data,isLoading } = useAuthenticatedQuery({
-    queryKey: ["todoList",todoEdit.id.toString()],
+  const { data, isLoading } = useAuthenticatedQuery({
+    queryKey: ["todoList", todoEdit.id.toString()],
     url: "/users/me?populate=todos",
     config: {
       headers: {
@@ -46,18 +47,18 @@ const TodoList = () => {
       description: "",
     });
   };
-  const onOpenConfirmM = (todo:ITodo)=>{
-    setIsOpenConfirmM(true)
-    setTodoEdit(todo)
-  }
-  const onCloseConfirmM = ()=>{
-    setIsOpenConfirmM(false)
+  const onOpenConfirmM = (todo: ITodo) => {
+    setIsOpenConfirmM(true);
+    setTodoEdit(todo);
+  };
+  const onCloseConfirmM = () => {
+    setIsOpenConfirmM(false);
     setTodoEdit({
-      id:0,
-      title:"",
-      description:""
-    })
-  }
+      id: 0,
+      title: "",
+      description: "",
+    });
+  };
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -67,26 +68,25 @@ const TodoList = () => {
       [name]: value,
     });
   };
-  const onRemove= async()=>{
-    try{
-      const {status}=await axiosInstance.delete(`/todos/${todoEdit.id}`,{
-        headers:{
-          Authorization:`Bearer ${userData}`
-        }
-      })
-      if(status===200) onCloseConfirmM()
-    }catch(error){
-      toast.remove("Error :"+error);
+  const onRemove = async () => {
+    try {
+      const { status } = await axiosInstance.delete(`/todos/${todoEdit.id}`, {
+        headers: {
+          Authorization: `Bearer ${userData}`,
+        },
+      });
+      if (status === 200) onCloseConfirmM();
+    } catch (error) {
+      toast.remove("Error :" + error);
     }
-
-  }
+  };
 
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsUpdating(true)
+    setIsUpdating(true);
     const { title, description } = todoEdit;
     try {
-      const {status} = await axiosInstance.put(
+      const { status } = await axiosInstance.put(
         `/todos/${todoEdit.id}`,
         { data: { title, description } },
         {
@@ -96,40 +96,44 @@ const TodoList = () => {
         }
       );
       console.log(status);
-      if(status === 200){
-        onCloseEditModal()
-        toast.success('todo updated')
+      if (status === 200) {
+        onCloseEditModal();
+        toast.success("todo updated");
       }
     } catch (error) {
       console.log(error);
-    }finally{
-      setIsUpdating(false)
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  if(isLoading) return (
-    <div className="flex items-center justify-between animate-pulse bg-[#f6f7f8] p-7">
-      <div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
-        <div className="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+  if (isLoading)
+    return (
+      <div className="space-y-3 p-9">
+        {Array.from({ length: 3 }, (_, idx) => (
+          <TodoSkeleton key={idx} />
+        ))}
       </div>
-      <div className="flex gap-3">
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-        <div className="h-2.5 bg-gray-300 rounded-full dark:bg-gray-700 w-12"></div>
-      </div>
-    </div>
-  );
-  console.log(isLoading)
-  
+    );
+  console.log(isLoading);
+
   return (
-    <div className="todo-colors space-y-3 ">
+    <div className="todo-colors space-y-3 p-9">
+      <div>
+        <Button fullWidth className="bg-teal-500 text-2xl hover:bg-teal-600">
+          {" "}
+          Add Todo
+        </Button>
+      </div>
       {data?.todos?.length > 0 ? (
-        data.todos.map((todo: ITodo,idx:number) => (
+        data.todos.map((todo: ITodo, idx: number) => (
           <div
             className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
             key={todo.id}
           >
-            <h3>{idx+1} - {todo.title}</h3>
+            <h3>
+              {idx + 1} - {todo.title}
+            </h3>
             <div className="flex space-x-2 ">
               <Button
                 className="w-[100px] bg-teal-600"

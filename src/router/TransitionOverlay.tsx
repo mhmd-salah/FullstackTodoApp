@@ -11,7 +11,7 @@ const TransitionOverlay=()=>{
       setIsAnimation(true)
       const timer = setTimeout(() => {
          setIsAnimation(false)
-      }, 2000);
+      }, 1000);
       return ()=> clearTimeout(timer)
    },[location.pathname])
    return <div className={`transition-overlay ${isAnimating?'active':""}`}></div>;
