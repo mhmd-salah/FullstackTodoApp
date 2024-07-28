@@ -48,6 +48,7 @@ const TodoList = () => {
       },
     },
   });
+  console.log(data)
   // handlers
   const onOpenEditModal = (todo: ITodo) => {
     setIsOpen(true);
@@ -131,7 +132,7 @@ const TodoList = () => {
       const { status } = await axiosInstance.post(
         "/todos",
         {
-          data: { title, description },
+          data: { title, description, user: [loggedInUser.user.id] },
         },
         {
           headers: {
