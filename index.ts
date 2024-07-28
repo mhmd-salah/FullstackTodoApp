@@ -30,3 +30,4 @@ const name = "toyota";
 export function getName() {
   return name;
 }
+

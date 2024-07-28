@@ -1,16 +1,23 @@
-import Button from "./ui/Button";
-import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
-import Modal from "./ui/Modal";
-import Input from "./ui/Input";
-import { ChangeEvent, FormEvent, useState } from "react";
-import Textarea from "./ui/Textarea";
-import { ITodo } from "../interfaces";
-import axiosInstance from "../config/axios.config";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import axiosInstance from "../config/axios.config";
+import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
+import { ITodo } from "../interfaces";
 import TodoSkeleton from "./TodoSkeleton";
+import Button from "./ui/Button";
+import Input from "./ui/Input";
+import Modal from "./ui/Modal";
+import Textarea from "./ui/Textarea";
 
 const TodoList = () => {
+  // abort controller
+  const abortController = new AbortController();
+  const { signal } = abortController;
   // hooks
+  useEffect(()=>{
+    console.log("re-Render")
+  })
+  
   const [addTodo,setAddTodo]= useState<Omit<ITodo,"id">>({
     title:"",
     description:""
@@ -20,6 +27,7 @@ const TodoList = () => {
     title: "",
     description: "",
   });
+  const [queryVersion,setQueryVersion] = useState<number>(1)
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenAddM, setIsOpenAddM] = useState(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -31,7 +39,7 @@ const TodoList = () => {
   const userData = loggedInUser?.jwt;
 
   const { data, isLoading } = useAuthenticatedQuery({
-    queryKey: ["todoList", todoEdit.id.toString()],
+    queryKey: ["todoList", queryVersion.toString()],
     url: "/users/me?populate=todos",
     config: {
       headers: {
@@ -45,6 +53,7 @@ const TodoList = () => {
     setTodoEdit(todo);
   };
   const onCloseEditModal = () => {
+    abortController.abort()
     setIsOpen(false);
     setTodoEdit({
       id: 0,
@@ -57,6 +66,7 @@ const TodoList = () => {
     setTodoEdit(todo);
   };
   const onCloseConfirmM = () => {
+    abortController.abort()
     setIsOpenConfirmM(false);
     setTodoEdit({
       id: 0,
@@ -68,6 +78,7 @@ const TodoList = () => {
     setIsOpenAddM(true);
   };
   const onCloseAddM = () => {
+    abortController.abort()
     setAddTodo({
       title: "",
       description: "",
@@ -98,8 +109,12 @@ const TodoList = () => {
         headers: {
           Authorization: `Bearer ${userData}`,
         },
+        signal
       });
-      if (status === 200) onCloseConfirmM();
+      if (status === 200) {
+        onCloseConfirmM();
+        setQueryVersion(prev=>prev+1)
+      }
     } catch (error) {
       toast.remove("Error :" + error);
     }
@@ -115,10 +130,12 @@ const TodoList = () => {
         headers: {
           Authorization: `Bearer ${userData}`,
         },
+        signal
       })
       if(status === 200){
         onCloseAddM()
         toast.success("todo added")
+        setQueryVersion(prev=>prev+1)
       }
     }catch(err){
       console.log(err)
@@ -142,6 +159,7 @@ const TodoList = () => {
       if (status === 200) {
         onCloseEditModal();
         toast.success("todo updated");
+        setQueryVersion(prev=>prev+1)
       }
     } catch (error) {
       console.log(error);
@@ -149,7 +167,6 @@ const TodoList = () => {
       setIsUpdating(false);
     }
   };
-
   if (isLoading)
     return (
       <div className="space-y-3 p-9">
@@ -228,7 +245,7 @@ const TodoList = () => {
             >
               Add
             </Button>
-            <Button fullWidth variant={"cancel"} onClick={onCloseAddM}>
+            <Button fullWidth variant={"cancel"} onClick={onCloseAddM} type="button">
               Cancel
             </Button>
           </div>
@@ -261,7 +278,7 @@ const TodoList = () => {
             >
               Update
             </Button>
-            <Button fullWidth variant={"cancel"} onClick={onCloseEditModal}>
+            <Button fullWidth variant={"cancel"} onClick={onCloseEditModal} type="button">
               Cancel
             </Button>
           </div>
