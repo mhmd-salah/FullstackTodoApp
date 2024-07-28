@@ -1,6 +1,18 @@
-import { ILoginInput, IRegisterInput } from "../interfaces";
+import { ILoginInput } from "../interfaces";
+// interface Ivalid {
+//   validation?: {
+//     required?: boolean ;
+//     minLength?: number;
+//     pattern?:RegExp;
+//     [key: string]: unknown;
+//   };
+// }
 
-export const REGISTER_FORM: IRegisterInput[] = [
+type valid = Record<string,boolean|number|string|RegExp>
+type InputDetails = "name"|"placeholder"|"type"|"validation"
+type Register = Record<InputDetails, string | number | boolean | valid>;
+
+export const REGISTER_FORM: Register[] = [
   {
     name: "username",
     placeholder: "Username",

@@ -11,14 +11,19 @@ import TodoSkeleton from "./TodoSkeleton";
 
 const TodoList = () => {
   // hooks
+  const [addTodo,setAddTodo]= useState<Omit<ITodo,"id">>({
+    title:"",
+    description:""
+  })
   const [todoEdit, setTodoEdit] = useState<ITodo>({
     id: 0,
     title: "",
     description: "",
   });
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenConfirmM, setIsOpenConfirmM] = useState(false);
+  const [isOpenAddM, setIsOpenAddM] = useState(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isOpenConfirmM, setIsOpenConfirmM] = useState(false);
 
   const loggedInUser = JSON.parse(
     localStorage.getItem("loggedInUser") as string
@@ -59,6 +64,24 @@ const TodoList = () => {
       description: "",
     });
   };
+  const onOpenAddM = () => {
+    setIsOpenAddM(true);
+  };
+  const onCloseAddM = () => {
+    setAddTodo({
+      title: "",
+      description: "",
+    });
+    setIsOpenAddM(false);
+  };
+
+  const onChangeAddInput= (e:ChangeEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
+    const {name,value} = e.target
+    setAddTodo({
+      ...addTodo,
+      [name]:value
+    })
+  }
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -68,6 +91,7 @@ const TodoList = () => {
       [name]: value,
     });
   };
+
   const onRemove = async () => {
     try {
       const { status } = await axiosInstance.delete(`/todos/${todoEdit.id}`, {
@@ -81,6 +105,25 @@ const TodoList = () => {
     }
   };
 
+  const submitAddTodoHandler= async(e:FormEvent<HTMLFormElement>)=>{
+    e.preventDefault()
+    const {title,description} = addTodo
+    try{
+      const {status} = await axiosInstance.post("/todos",{
+        data:{title,description}
+      },{
+        headers: {
+          Authorization: `Bearer ${userData}`,
+        },
+      })
+      if(status === 200){
+        onCloseAddM()
+        toast.success("todo added")
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsUpdating(true);
@@ -115,13 +158,15 @@ const TodoList = () => {
         ))}
       </div>
     );
-  console.log(isLoading);
 
   return (
     <div className="todo-colors space-y-3 p-9">
       <div>
-        <Button fullWidth className="bg-teal-500 text-2xl hover:bg-teal-600">
-          {" "}
+        <Button
+          fullWidth
+          className="bg-teal-500 text-2xl hover:bg-teal-600"
+          onClick={() => onOpenAddM()}
+        >
           Add Todo
         </Button>
       </div>
@@ -154,7 +199,42 @@ const TodoList = () => {
         <h3 className="text-3xl p-4 text-center animate-pulse">No Todos Yet</h3>
       )}
 
-      {/* edit todo modal */}
+      {/* new todo modal */}
+      <Modal
+        isOpen={isOpenAddM}
+        closeModal={onCloseAddM}
+        title="Add New Todo"
+        description="To add new Todo "
+      >
+        <form onSubmit={submitAddTodoHandler}>
+          <Input
+            type="text"
+            placeholder="Enter your todo title"
+            name="title"
+            value={addTodo.title}
+            onChange={onChangeAddInput}
+          />
+          <Textarea
+            placeholder="Enter your todo description"
+            name="description"
+            value={addTodo.description}
+            onChange={onChangeAddInput}
+          />
+          <div className="flex space-x-2 mt-4">
+            <Button
+              fullWidth
+              className="bg-teal-600 hover:bg-teal-700"
+              isLoading={isUpdating}
+            >
+              Add
+            </Button>
+            <Button fullWidth variant={"cancel"} onClick={onCloseAddM}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </Modal>
+      {/* edit modal */}
       <Modal
         isOpen={isOpen}
         closeModal={onCloseEditModal}
@@ -217,3 +297,5 @@ const TodoList = () => {
 };
 
 export default TodoList;
+
+

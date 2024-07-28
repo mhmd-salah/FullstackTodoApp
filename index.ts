@@ -24,3 +24,9 @@ console.log(userOne.mohamed.toUpperCase());
 
 // console.log(firstMember.memberName.toUpperCase())
 // firstMember.memberName.toUpperCase()
+
+// Replace namespace with a module
+const name = "toyota";
+export function getName() {
+  return name;
+}
