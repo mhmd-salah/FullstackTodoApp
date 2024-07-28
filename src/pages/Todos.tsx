@@ -1,4 +1,4 @@
-import useCustomQuery from "../hooks/useAuthenticatedQuery";
+import useCustomQuery from "../hooks/useCustomQuery";
 import Paginator from "../components/ui/Paginator";
 import { ChangeEvent, useState } from "react";
 import Button from "../components/ui/Button";

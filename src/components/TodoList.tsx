@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axiosInstance from "../config/axios.config";
-import useAuthenticatedQuery from "../hooks/useAuthenticatedQuery";
+import useCustomQuery from "../hooks/useCustomQuery";
 import { ITodo } from "../interfaces";
 import TodoSkeleton from "./TodoSkeleton";
 import Button from "./ui/Button";
@@ -10,24 +10,25 @@ import Modal from "./ui/Modal";
 import Textarea from "./ui/Textarea";
 
 const TodoList = () => {
+  toast.success("re-render");
   // abort controller
   const abortController = new AbortController();
   const { signal } = abortController;
   // hooks
-  useEffect(()=>{
-    console.log("re-Render")
-  })
-  
-  const [addTodo,setAddTodo]= useState<Omit<ITodo,"id">>({
-    title:"",
-    description:""
-  })
+  useEffect(() => {
+    console.log("re-Render");
+  });
+
+  const [addTodo, setAddTodo] = useState<Omit<ITodo, "id">>({
+    title: "",
+    description: "",
+  });
   const [todoEdit, setTodoEdit] = useState<ITodo>({
     id: 0,
     title: "",
     description: "",
   });
-  const [queryVersion,setQueryVersion] = useState<number>(1)
+  const [queryVersion, setQueryVersion] = useState<number>(1);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenAddM, setIsOpenAddM] = useState(false);
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -38,7 +39,7 @@ const TodoList = () => {
   );
   const userData = loggedInUser?.jwt;
 
-  const { data, isLoading } = useAuthenticatedQuery({
+  const { data, isLoading } = useCustomQuery({
     queryKey: ["todoList", queryVersion.toString()],
     url: "/users/me?populate=todos",
     config: {
@@ -53,7 +54,8 @@ const TodoList = () => {
     setTodoEdit(todo);
   };
   const onCloseEditModal = () => {
-    abortController.abort()
+    abortController.abort();
+    toast.remove("canceled");
     setIsOpen(false);
     setTodoEdit({
       id: 0,
@@ -66,7 +68,7 @@ const TodoList = () => {
     setTodoEdit(todo);
   };
   const onCloseConfirmM = () => {
-    abortController.abort()
+    abortController.abort();
     setIsOpenConfirmM(false);
     setTodoEdit({
       id: 0,
@@ -78,7 +80,7 @@ const TodoList = () => {
     setIsOpenAddM(true);
   };
   const onCloseAddM = () => {
-    abortController.abort()
+    abortController.abort();
     setAddTodo({
       title: "",
       description: "",
@@ -86,13 +88,15 @@ const TodoList = () => {
     setIsOpenAddM(false);
   };
 
-  const onChangeAddInput= (e:ChangeEvent<HTMLInputElement|HTMLTextAreaElement>)=>{
-    const {name,value} = e.target
+  const onChangeAddInput = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
     setAddTodo({
       ...addTodo,
-      [name]:value
-    })
-  }
+      [name]: value,
+    });
+  };
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -109,38 +113,42 @@ const TodoList = () => {
         headers: {
           Authorization: `Bearer ${userData}`,
         },
-        signal
+        signal,
       });
       if (status === 200) {
         onCloseConfirmM();
-        setQueryVersion(prev=>prev+1)
+        setQueryVersion((prev) => prev + 1);
       }
     } catch (error) {
       toast.remove("Error :" + error);
     }
   };
 
-  const submitAddTodoHandler= async(e:FormEvent<HTMLFormElement>)=>{
-    e.preventDefault()
-    const {title,description} = addTodo
-    try{
-      const {status} = await axiosInstance.post("/todos",{
-        data:{title,description}
-      },{
-        headers: {
-          Authorization: `Bearer ${userData}`,
+  const submitAddTodoHandler = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { title, description } = addTodo;
+    try {
+      const { status } = await axiosInstance.post(
+        "/todos",
+        {
+          data: { title, description },
         },
-        signal
-      })
-      if(status === 200){
-        onCloseAddM()
-        toast.success("todo added")
-        setQueryVersion(prev=>prev+1)
+        {
+          headers: {
+            Authorization: `Bearer ${userData}`,
+          },
+          signal,
+        }
+      );
+      if (status === 200) {
+        onCloseAddM();
+        toast.success("todo added");
+        setQueryVersion((prev) => prev + 1);
       }
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
   const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsUpdating(true);
@@ -159,7 +167,7 @@ const TodoList = () => {
       if (status === 200) {
         onCloseEditModal();
         toast.success("todo updated");
-        setQueryVersion(prev=>prev+1)
+        setQueryVersion((prev) => prev + 1);
       }
     } catch (error) {
       console.log(error);
@@ -245,7 +253,12 @@ const TodoList = () => {
             >
               Add
             </Button>
-            <Button fullWidth variant={"cancel"} onClick={onCloseAddM} type="button">
+            <Button
+              fullWidth
+              variant={"cancel"}
+              onClick={onCloseAddM}
+              type="button"
+            >
               Cancel
             </Button>
           </div>
@@ -278,7 +291,12 @@ const TodoList = () => {
             >
               Update
             </Button>
-            <Button fullWidth variant={"cancel"} onClick={onCloseEditModal} type="button">
+            <Button
+              fullWidth
+              variant={"cancel"}
+              onClick={onCloseEditModal}
+              type="button"
+            >
               Cancel
             </Button>
           </div>
@@ -314,5 +332,3 @@ const TodoList = () => {
 };
 
 export default TodoList;
-
-
