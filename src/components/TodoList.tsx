@@ -8,9 +8,18 @@ import Button from "./ui/Button";
 import Input from "./ui/Input";
 import Modal from "./ui/Modal";
 import Textarea from "./ui/Textarea";
+import { faker } from "@faker-js/faker";
+import { Notyf } from "notyf";
 
 const TodoList = () => {
-  toast.success("re-render");
+  const notyf = new Notyf({
+    types: [
+      {
+        type: "success",
+        background: "#0d9488",
+      },
+    ],
+  });
   // abort controller
   const abortController = new AbortController();
   const { signal } = abortController;
@@ -48,7 +57,7 @@ const TodoList = () => {
       },
     },
   });
-  console.log(data)
+  console.log(data);
   // handlers
   const onOpenEditModal = (todo: ITodo) => {
     setIsOpen(true);
@@ -56,7 +65,7 @@ const TodoList = () => {
   };
   const onCloseEditModal = () => {
     abortController.abort();
-    toast.remove("canceled");
+    notyf.error("abort controller");
     setIsOpen(false);
     setTodoEdit({
       id: 0,
@@ -82,6 +91,7 @@ const TodoList = () => {
   };
   const onCloseAddM = () => {
     abortController.abort();
+    notyf.error("Abort Controller")
     setAddTodo({
       title: "",
       description: "",
@@ -119,12 +129,39 @@ const TodoList = () => {
       if (status === 200) {
         onCloseConfirmM();
         setQueryVersion((prev) => prev + 1);
+        notyf.success("todo removed");
       }
     } catch (error) {
-      toast.remove("Error :" + error);
+      notyf.error("Error :" + error);
     }
   };
 
+  const generateTodos = async () => {
+    for (let i = 0; i < 10; i++) {
+      try {
+        await axiosInstance.post(
+          "/todos",
+          {
+            data: {
+              title: faker.word.words(4),
+              description: faker.lorem.paragraph(),
+              user: [loggedInUser.user.id],
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userData}`,
+            },
+            signal,
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    notyf.success("Generate fake todos");
+    setQueryVersion((prev) => prev + 1);
+  };
   const submitAddTodoHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { title, description } = addTodo;
@@ -143,7 +180,7 @@ const TodoList = () => {
       );
       if (status === 200) {
         onCloseAddM();
-        toast.success("todo added");
+        notyf.success("todo added");
         setQueryVersion((prev) => prev + 1);
       }
     } catch (err) {
@@ -184,25 +221,31 @@ const TodoList = () => {
         ))}
       </div>
     );
-
   return (
     <div className="todo-colors space-y-3 p-9">
-      <div>
+      <div className="flex space-x-4">
         <Button
           fullWidth
-          className="bg-teal-500 text-2xl hover:bg-teal-600"
+          className="bg-teal-500 md:text-2xl hover:bg-teal-600"
           onClick={() => onOpenAddM()}
         >
           Add Todo
+        </Button>
+        <Button
+          fullWidth
+          className="bg-teal-500 md:text-2xl hover:bg-teal-600"
+          onClick={() => generateTodos()}
+        >
+          Generate Todos
         </Button>
       </div>
       {data?.todos?.length > 0 ? (
         data.todos.map((todo: ITodo, idx: number) => (
           <div
-            className="flex justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
+            className="flex flex-col md:flex-row space-y-1  justify-between bg-[#f6f7f8] items-center p-3 rounded-md"
             key={todo.id}
           >
-            <h3>
+            <h3 className="text-lg sm:text-xl">
               {idx + 1} - {todo.title}
             </h3>
             <div className="flex space-x-2 ">
@@ -213,7 +256,7 @@ const TodoList = () => {
                 Edit
               </Button>
               <Button
-                className="w-[100px] DlB"
+                className="w-[100px] DlB hover:bg-red-800"
                 onClick={() => onOpenConfirmM(todo)}
               >
                 Remove
