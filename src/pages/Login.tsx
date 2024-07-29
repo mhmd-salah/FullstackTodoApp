@@ -75,7 +75,7 @@ const LoginPage = () => {
       <h2 className="text-3xl mb-4">Login</h2>
       <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
         {RenderInputLogin}
-        <Button fullWidth isLoading={isLoading}>
+        <Button fullWidth isLoading={isLoading} >
           {isLoading ? "loading" : "Login"}
         </Button>
       </form>

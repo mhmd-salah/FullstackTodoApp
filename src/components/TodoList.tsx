@@ -8,6 +8,7 @@ import Button from "./ui/Button";
 import Input from "./ui/Input";
 import Modal from "./ui/Modal";
 import Textarea from "./ui/Textarea";
+import { faker } from "@faker-js/faker";
 
 const TodoList = () => {
   toast.success("re-render");
@@ -48,7 +49,7 @@ const TodoList = () => {
       },
     },
   });
-  console.log(data)
+  console.log(data);
   // handlers
   const onOpenEditModal = (todo: ITodo) => {
     setIsOpen(true);
@@ -125,6 +126,32 @@ const TodoList = () => {
     }
   };
 
+  const generateTodos = async () => {
+    for (let i = 0; i < 10; i++) {
+      try {
+        await axiosInstance.post(
+          "/todos",
+          {
+            data: {
+              title: faker.word.words(4),
+              description: faker.lorem.paragraph(),
+              user: [loggedInUser.user.id],
+            },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userData}`,
+            },
+            signal,
+          }
+        );
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    toast.success("Generate fake todos");
+    setQueryVersion((prev) => prev + 1);
+  };
   const submitAddTodoHandler = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { title, description } = addTodo;
@@ -187,13 +214,20 @@ const TodoList = () => {
 
   return (
     <div className="todo-colors space-y-3 p-9">
-      <div>
+      <div className="flex space-x-4">
         <Button
           fullWidth
           className="bg-teal-500 text-2xl hover:bg-teal-600"
           onClick={() => onOpenAddM()}
         >
           Add Todo
+        </Button>
+        <Button
+          fullWidth
+          className="bg-teal-500 text-2xl hover:bg-teal-600"
+          onClick={() => generateTodos()}
+        >
+          Generate Todos
         </Button>
       </div>
       {data?.todos?.length > 0 ? (

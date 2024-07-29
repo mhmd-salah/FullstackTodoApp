@@ -13,14 +13,14 @@ const Navbar = () => {
     },1500)
   }
   return (
-    <nav className="bg-[#222] px-9 py-5 w-full ">
+    <nav className="bg-teal-600 px-9 py-5 w-full ">
       <ul className="flex items-center justify-center sm:justify-between container">
         <li className="text-white duration-200 font-semibold text-lg">
           <NavLink to="/">Home</NavLink>
         </li>
         {userData?.jwt ? (
           <>
-            <li className="text-teal-500 duration-200 font-semibold text-sm hidden sm:block">
+            <li className="text-white duration-200 font-semibold text-sm hidden sm:block">
               Name : {userData.user.username}
             </li>
             <p className="flex items-center ">
@@ -31,7 +31,7 @@ const Navbar = () => {
                 <NavLink to="/todos">Todos</NavLink>
               </li>
               <li className="text-white duration-200 font-semibold text-lg">
-                <Button onClick={onLogout} className="text-red-600 bg-transparent ">Logout</Button>
+                <Button onClick={onLogout} className="text-red-600 font-semibold bg-transparent ">Logout</Button>
               </li>
             </p>
           </>
