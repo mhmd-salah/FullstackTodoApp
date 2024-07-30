@@ -1,5 +1,4 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 import axiosInstance from "../config/axios.config";
 import useCustomQuery from "../hooks/useCustomQuery";
 import { ITodo } from "../interfaces";
@@ -65,7 +64,6 @@ const TodoList = () => {
   };
   const onCloseEditModal = () => {
     abortController.abort();
-    notyf.error("abort controller");
     setIsOpen(false);
     setTodoEdit({
       id: 0,
@@ -91,7 +89,6 @@ const TodoList = () => {
   };
   const onCloseAddM = () => {
     abortController.abort();
-    notyf.error("Abort Controller")
     setAddTodo({
       title: "",
       description: "",
@@ -204,7 +201,7 @@ const TodoList = () => {
       console.log(status);
       if (status === 200) {
         onCloseEditModal();
-        toast.success("todo updated");
+        notyf.success("todo updated");
         setQueryVersion((prev) => prev + 1);
       }
     } catch (error) {
