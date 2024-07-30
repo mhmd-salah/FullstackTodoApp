@@ -6,11 +6,11 @@ import { REGISTER_FORM } from "../data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "../validation";
 import axiosInstance from "../config/axios.config";
-import toast from "react-hot-toast";
 import { useState } from "react";
 import { AxiosError } from "axios";
 import { IErrorResponse } from "../interfaces";
 import { Link, useNavigate } from "react-router-dom";
+import { Notyf } from "notyf";
 
 interface IformInput {
   username: string;
@@ -19,7 +19,19 @@ interface IformInput {
 }
 
 const Register = () => {
-  const navigate = useNavigate()
+  const notyf = new Notyf({
+    types: [
+      {
+        type: "success",
+        background: "teal",
+        icon: {
+          className: "text-white",
+          tagName: "i",
+        },
+      },
+    ],
+  });
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const {
     register,
@@ -48,14 +60,7 @@ const Register = () => {
     try {
       const { status } = await axiosInstance.post("/auth/local/register", data);
       if (status === 200) {
-        toast.success("you will navigate to the Home", {
-          position: "bottom-right",
-          duration: 4000,
-          style: {
-            background: "teal ",
-            color: "white",
-          },
-        });
+        notyf.success("you will navigate to the Home");
       }
       setTimeout(() => {
         navigate("/login")
@@ -64,12 +69,7 @@ const Register = () => {
       const errorObj = error as AxiosError<IErrorResponse>;
       const errorMsg = errorObj.response?.data?.error?.message;
       if (errorMsg === "Email or Username are already taken") navigate("/login")
-        toast.error(`Error: ${errorMsg}`, {
-          duration: 2000,
-          style: {
-            width: "fit-content",
-          },
-        });
+        notyf.error(`Error: ${errorMsg}`);
     } finally {
       setIsLoading(false);
     }
