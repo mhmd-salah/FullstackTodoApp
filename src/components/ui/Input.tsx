@@ -6,7 +6,7 @@ const Input = forwardRef(({ ...rest }: IProps, ref: Ref<HTMLInputElement>) => {
   return (
     <input
       ref={ref}
-      className="border-[1px] border-gray-300 shadow-lg  focus:outline-none focus:ring-1 focus:ring-teal-600 rounded-lg px-3 py-3 text-md w-full bg-transparent"
+      className="border-[1px] bg-white border-gray-300 shadow-lg  focus:outline-none focus:ring-1 focus:ring-teal-600 rounded-lg px-3 py-3 text-md w-full bg-transparent"
       {...rest}
     />
   );

@@ -8,7 +8,7 @@ const RootLayout = () => {
     <div className="root-layout ">
       <Navbar />
       <div
-        className={` container min-h-[100vh] overflow-hidden py-9`}
+        className={` container min-h-[88vh] overflow-hidden py-9`}
       >
         {/* <TransitionOverlay /> */}
         <Outlet />

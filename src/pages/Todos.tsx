@@ -1,4 +1,5 @@
 import TodoSkeleton from "../components/TodoSkeleton";
+import Paginator from "../components/ui/Paginator";
 import useCustomQuery from "../hooks/useCustomQuery";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
@@ -37,19 +38,30 @@ export default function Todos() {
   return (
     <>
       {data?.data?.length > 0 ? (
-        data?.data.map(({id,attributes:{title}}:{id:number,attributes:{id:number,title:string}}, idx: number) => (
-          <div
-            className="bg-[#f6f7f8] p-3 rounded-md mb-2 border-l-8 border-teal-600"
-            key={id}
-          >
-            <h3 className="text-lg sm:text-xl">
-              {idx + 1} - {title}
-            </h3>
-          </div>
-        ))
+        data?.data.map(
+          (
+            {
+              id,
+              attributes: { title },
+            }: { id: number; attributes: { id: number; title: string } },
+            idx: number
+          ) => (
+            <div
+              className="bg-[#f6f7f8] p-3 rounded-md mb-2 border-l-8 border-teal-600"
+              key={id}
+            >
+              <h3 className="text-lg sm:text-xl">
+                {idx + 1} - {title}
+              </h3>
+            </div>
+          )
+        )
       ) : (
         <h3 className="text-3xl p-4 text-center animate-pulse">No Todos Yet</h3>
       )}
+      <div className="my-7">
+        <Paginator />
+      </div>
     </>
   );
 }
