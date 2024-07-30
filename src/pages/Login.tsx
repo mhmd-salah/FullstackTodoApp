@@ -73,7 +73,7 @@ const LoginPage = () => {
           {...register(name, validation)}
         />
         <div className="h-3">
-          {errors[name] && <InputErrorMessage msg={errors[name].message} />}
+          {errors[name as keyof IFormInput] && <InputErrorMessage msg={errors[name as keyof IFormInput]?.message} />}
         </div>
       </div>
     )

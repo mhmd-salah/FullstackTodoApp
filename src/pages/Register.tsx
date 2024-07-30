@@ -1,4 +1,4 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, RegisterOptions } from "react-hook-form";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import InputErrorMessage from "../components/ui/InputErrorMessage";
@@ -43,12 +43,12 @@ const Register = () => {
     ({ name, placeholder, type, validation }, idx) => (
       <div key={idx}>
         <Input
-          type={type}
-          placeholder={placeholder}
-          {...register(name, validation)}
+          type={type as string}
+          placeholder={placeholder as string}
+          {...register(name as keyof IformInput, validation as RegisterOptions<IformInput, keyof IformInput>)}
         />
         <div className="h-3">
-          {errors[name] && <InputErrorMessage msg={errors[name]?.message} />}
+          {errors[name as keyof IformInput] && <InputErrorMessage msg={errors[name as keyof IformInput]?.message} />}
         </div>
       </div>
     )
