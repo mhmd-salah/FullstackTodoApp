@@ -6,11 +6,11 @@ import InputErrorMessage from "../components/ui/InputErrorMessage";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../validation";
 import axiosInstance from "../config/axios.config";
-import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../css/login.css"
+import { Notyf } from "notyf";
 interface IError {
   error: {
     message?: string;
@@ -22,6 +22,14 @@ interface IFormInput {
   password: string;
 }
 const LoginPage = () => {
+    const notyf = new Notyf({
+      types: [
+        {
+          type: "success",
+          background: "#0d9488",
+        },
+      ],
+    });
   // const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -38,7 +46,7 @@ const LoginPage = () => {
       );
       console.log(resData);
       if (status === 200) {
-        toast.success("email and password is correct");
+        notyf.success("email and password is correct");
         localStorage.setItem("loggedInUser", JSON.stringify(resData));
         setIsLoading(false);
         setTimeout(() => {
@@ -48,7 +56,7 @@ const LoginPage = () => {
     } catch (error) {
       const errorAxios = error as AxiosError<IError>;
       const errMsg = errorAxios.response?.data?.error.message;
-      toast.remove(errMsg);
+      notyf.error(`${errMsg}`);
     } finally {
       setIsLoading(false);
     }

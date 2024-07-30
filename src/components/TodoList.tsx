@@ -9,9 +9,17 @@ import Input from "./ui/Input";
 import Modal from "./ui/Modal";
 import Textarea from "./ui/Textarea";
 import { faker } from "@faker-js/faker";
+import { Notyf } from "notyf";
 
 const TodoList = () => {
-  toast.success("re-render");
+  const notyf = new Notyf({
+    types: [
+      {
+        type: "success",
+        background: "#0d9488",
+      },
+    ],
+  });
   // abort controller
   const abortController = new AbortController();
   const { signal } = abortController;
@@ -57,7 +65,7 @@ const TodoList = () => {
   };
   const onCloseEditModal = () => {
     abortController.abort();
-    toast.remove("canceled");
+    notyf.error("abort controller");
     setIsOpen(false);
     setTodoEdit({
       id: 0,
@@ -83,6 +91,7 @@ const TodoList = () => {
   };
   const onCloseAddM = () => {
     abortController.abort();
+    notyf.error("Abort Controller")
     setAddTodo({
       title: "",
       description: "",
@@ -120,9 +129,10 @@ const TodoList = () => {
       if (status === 200) {
         onCloseConfirmM();
         setQueryVersion((prev) => prev + 1);
+        notyf.success("todo removed");
       }
     } catch (error) {
-      toast.remove("Error :" + error);
+      notyf.error("Error :" + error);
     }
   };
 
@@ -149,7 +159,7 @@ const TodoList = () => {
         console.log(err);
       }
     }
-    toast.success("Generate fake todos");
+    notyf.success("Generate fake todos");
     setQueryVersion((prev) => prev + 1);
   };
   const submitAddTodoHandler = async (e: FormEvent<HTMLFormElement>) => {
@@ -170,7 +180,7 @@ const TodoList = () => {
       );
       if (status === 200) {
         onCloseAddM();
-        toast.success("todo added");
+        notyf.success("todo added");
         setQueryVersion((prev) => prev + 1);
       }
     } catch (err) {
@@ -211,7 +221,6 @@ const TodoList = () => {
         ))}
       </div>
     );
-
   return (
     <div className="todo-colors space-y-3 p-9">
       <div className="flex space-x-4">
@@ -247,7 +256,7 @@ const TodoList = () => {
                 Edit
               </Button>
               <Button
-                className="w-[100px] DlB"
+                className="w-[100px] DlB hover:bg-red-800"
                 onClick={() => onOpenConfirmM(todo)}
               >
                 Remove
